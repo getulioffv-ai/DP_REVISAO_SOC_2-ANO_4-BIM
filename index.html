@@ -1,0 +1,275 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Desafio da Revisão Sociologia</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: palco de projeção — placar fixo no topo, pergunta à esquerda, alternativas à direita */
+:root{
+  --bg:#F2F4FA; --surface:#FFFFFF; --ink:#14213D; --muted:#56627F; --line:#D3D9E8;
+  --accent:#1E5631; --accent-ink:#FFFFFF; --gold:#B9801A;
+  --ok:#17744A; --ok-bg:#DCF2E6; --bad:#B3261E; --bad-bg:#FBE2DF; --sel-bg:#E2E8F8; --sel-line:#2E5A9E;
+  --t0:#E4572E; --t1:#2E86DE; --t2:#8E44AD; --t3:#1E9E6A; --t4:#D4A017; --t5:#D6457F;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif; --text:'Inter','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1530; --surface:#162244; --ink:#EDF0FA; --muted:#9DAAC9; --line:#2B3B68;
+  --accent:#6CCB92; --accent-ink:#0C1530; --gold:#E3B450;
+  --ok:#62D69E; --ok-bg:#12392B; --bad:#FF8F87; --bad-bg:#47201F; --sel-bg:#23366B; --sel-line:#7FA6F0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1530; --surface:#162244; --ink:#EDF0FA; --muted:#9DAAC9; --line:#2B3B68;
+  --accent:#6CCB92; --accent-ink:#0C1530; --gold:#E3B450;
+  --ok:#62D69E; --ok-bg:#12392B; --bad:#FF8F87; --bad-bg:#47201F; --sel-bg:#23366B; --sel-line:#7FA6F0; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-size:clamp(15px,1.25vw,30px);line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:1rem 1.5rem}
+*{box-sizing:border-box}
+.app{max-width:1600px;margin:0 auto;display:flex;flex-direction:column;gap:1rem;min-height:calc(100vh - 3rem)}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--sel-line);outline-offset:2px}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:.15rem}
+.brand b{font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:-.01em}
+.score{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}
+.team{display:flex;align-items:center;gap:.6rem;padding:.4rem .8rem;border-radius:.7rem;background:var(--surface);border:2px solid var(--line);min-width:0}
+.team i{width:.85rem;height:.85rem;border-radius:50%;flex:none}
+.team span{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:11ch}
+.team b{font-family:var(--display);font-size:1.3rem;font-variant-numeric:tabular-nums}
+.team.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--sel-line)}
+.team.bump b{animation:bump .6s}
+@keyframes bump{40%{transform:scale(1.35)}}
+/* setup */
+.setup{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:2rem;align-items:start;margin-block:auto}
+.hero h1{font-size:clamp(2.4rem,6vw,5.2rem);font-weight:800;letter-spacing:-.03em}
+.hero p{max-width:34ch;color:var(--muted);font-size:1.1rem;margin:.8rem 0 0}
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:1rem;padding:1.3rem;display:flex;flex-direction:column;gap:1.1rem}
+.row{display:flex;flex-direction:column;gap:.45rem}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.chip{padding:.45rem .9rem;border-radius:.6rem;border:2px solid var(--line);background:var(--bg);font-weight:600;min-width:2.6rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.names{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+.names label{display:flex;align-items:center;gap:.5rem;border:2px solid var(--line);border-radius:.6rem;padding:.25rem .6rem;background:var(--bg)}
+.names i{width:.8rem;height:.8rem;border-radius:50%;flex:none}
+.names input{border:0;background:transparent;color:var(--ink);font:inherit;width:100%;min-width:0;padding:.3rem 0}
+.sw{display:flex;align-items:center;gap:.6rem}
+.sw input{width:1.2rem;height:1.2rem;accent-color:var(--accent)}
+.go{background:var(--accent);color:var(--accent-ink);border:0;border-radius:.8rem;padding:.9rem 1.4rem;font-family:var(--display);font-weight:700;font-size:1.25rem}
+.go:hover{filter:brightness(1.08)}
+.ghost{background:transparent;border:2px solid var(--line);border-radius:.7rem;padding:.5rem 1rem;font-weight:600}
+.ghost:hover{border-color:var(--ink)}
+/* round */
+.meta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.turn{display:flex;align-items:center;gap:.6rem;font-family:var(--display);font-weight:700;font-size:1.5rem}
+.turn i{width:1.1rem;height:1.1rem;border-radius:50%}
+.tag{padding:.25rem .7rem;border-radius:99px;background:var(--sel-bg);font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.tag.steal{background:var(--gold);color:var(--bg)}
+.timer{margin-left:auto;display:flex;align-items:center;gap:.8rem;min-width:min(22rem,100%);flex:1 1 14rem;max-width:26rem}
+.timer b{font-family:var(--display);font-size:1.7rem;font-variant-numeric:tabular-nums;min-width:3.2ch;text-align:right}
+.track{flex:1;height:.9rem;background:var(--line);border-radius:99px;overflow:hidden}
+.fill{height:100%;background:var(--sel-line);border-radius:99px;transition:width 1s linear,background .3s}
+.fill.low{background:var(--bad)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.2rem;align-items:start}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:1rem;padding:1.4rem 1.6rem}
+.bh{margin:.6rem 0 .3rem;color:var(--accent);font-weight:700}
+.srcl{font-size:.72rem;color:var(--muted);margin:-.4rem 0 .9rem;text-align:right;font-style:italic}
+.qq{border-left:4px solid var(--line);padding-left:.9rem}
+.card.md .base{font-size:1.15rem;line-height:1.42}.card.md .cmd{font-size:1.3rem}
+.card.lg .base{font-size:1rem;line-height:1.38;margin-bottom:.8rem}.card.lg .cmd{font-size:1.2rem}
+.card.xl .base{font-size:.88rem;line-height:1.34;margin-bottom:.6rem}.card.xl .cmd{font-size:1.1rem}
+.card.lg .srcl,.card.xl .srcl{font-size:.62rem}
+.base{font-size:1.3rem;line-height:1.5;margin:.5rem 0 1.1rem}
+.cmd{font-family:var(--display);font-weight:700;font-size:1.5rem;line-height:1.25;margin:0}
+.alts{display:flex;flex-direction:column;gap:.6rem}
+.alt{display:grid;grid-template-columns:2.4rem minmax(0,1fr);gap:.9rem;align-items:start;text-align:left;
+  background:var(--surface);border:2px solid var(--line);border-radius:.9rem;padding:.8rem 1rem;font-size:1.12rem;line-height:1.35}
+.alt .L{font-family:var(--display);font-weight:800;font-size:1.4rem;width:2.4rem;height:2.4rem;border-radius:.6rem;background:var(--bg);display:grid;place-items:center}
+.alt:hover:not(:disabled){border-color:var(--sel-line)}
+.alt.sel{background:var(--sel-bg);border-color:var(--sel-line)}
+.alt.sel .L{background:var(--sel-line);color:var(--bg)}
+.alt.out{opacity:.35;text-decoration:line-through}
+.alt.right{background:var(--ok-bg);border-color:var(--ok)}
+.alt.right .L{background:var(--ok);color:var(--bg)}
+.alt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.alt.wrong .L{background:var(--bad);color:var(--bg)}
+.alt:disabled{cursor:default}
+.actions{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:.3rem}
+.hint{color:var(--muted);font-size:.8rem}
+.verdict{border-radius:1rem;padding:1rem 1.3rem;border:2px solid var(--line);background:var(--surface)}
+.verdict.ok{border-color:var(--ok);background:var(--ok-bg)}
+.verdict.no{border-color:var(--bad);background:var(--bad-bg)}
+.verdict h3{font-size:1.6rem;margin-bottom:.4rem}
+.verdict p{margin:0;font-size:1.05rem}
+.notice{border:2px dashed var(--gold);border-radius:.8rem;padding:.6rem 1rem;font-weight:600}
+/* final */
+.final{display:flex;flex-direction:column;gap:1.4rem;margin-block:auto}
+.final h1{font-size:clamp(2.2rem,5vw,4.4rem);font-weight:800}
+.rank{display:flex;flex-direction:column;gap:.6rem;max-width:46rem}
+.rk{display:grid;grid-template-columns:3rem minmax(0,1fr) auto;align-items:center;gap:1rem;background:var(--surface);border:2px solid var(--line);border-radius:.9rem;padding:.7rem 1.1rem}
+.rk .n{font-family:var(--display);font-weight:800;font-size:1.9rem;color:var(--muted)}
+.rk.first{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold)}
+.rk.first .n{color:var(--gold)}
+.rk .nm{display:flex;gap:.6rem;align-items:center;font-weight:600;font-size:1.3rem;min-width:0}
+.rk .nm i{width:1rem;height:1rem;border-radius:50%;flex:none}
+.rk .pt{font-family:var(--display);font-weight:800;font-size:2rem;font-variant-numeric:tabular-nums}
+.foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;color:var(--muted);font-size:.78rem;margin-top:auto}
+@media (max-width:900px){.setup,.stage{grid-template-columns:1fr}.names{grid-template-columns:1fr}.timer{margin-left:0;max-width:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<div class="app" id="app"></div>
+<script>
+const Q = [{"tema": "Povos indígenas e aculturação", "b": [["h", "Texto I"], ["p", "Mais uma vez, nós, os povos indígenas, somos vítimas de um pensamento que separa e que tenta nos eliminar cultural, social e fisicamente. A justificativa é a de que somos apenas 250 mil pessoas e o Brasil não pode suportar esse ônus. [...] É preciso congelar essas ideias colonizadoras, porque elas são irreais e hipócritas e também genocidas. [...] Nós, índios, queremos falar, mas queremos ser escutados na nossa língua, nos nossos costumes."], ["s", "Marcos Terena, presidente do Comitê Intertribal Articulador dos Direitos Indígenas na ONU e fundador das Nações Indígenas. Folha de S. Paulo, 31 ago. 1994."], ["h", "Texto II"], ["p", "O Brasil não terá índios no final do século XXI. [...] E por que isso? Pela razão muito simples que consiste no fato de o índio brasileiro não ser distinto das demais comunidades primitivas que existiram no mundo. A história não é outra coisa senão um processo civilizatório, que conduz o homem, por conta própria ou por difusão da cultura, a passar do paleolítico ao neolítico e do neolítico a um estágio civilizatório."], ["s", "Hélio Jaguaribe, cientista político. Folha de S. Paulo, 2 set. 1994."]], "c": "Os textos referem-se à integração do índio à chamada civilização brasileira: Pode-se afirmar, segundo os textos, que", "a": ["tanto Terena quanto Jaguaribe propõem ideias inadequadas, pois o primeiro deseja a aculturação feita pela “civilização branca”, e o segundo, o confinamento de tribos.", "Terena quer transformar o Brasil numa terra só de índios, pois pretende mudar até mesmo a língua do país, enquanto a ideia de Jaguaribe é anticonstitucional, pois fere o direito à identidade cultural dos índios.", "Terena compreende que a melhor solução é que os brancos aprendam a língua tupi para entender melhor o que dizem os índios. Jaguaribe é de opinião que, até o final do século XXI, seja feita uma limpeza étnica no Brasil.", "Terena defende que a sociedade brasileira deve respeitar a cultura dos índios e Jaguaribe acredita na inevitabilidade do processo de aculturação dos índios e de sua incorporação à sociedade brasileira.", "Terena propõe que a integração indígena deve ser lenta, gradativa e progressiva, e Jaguaribe propõe que essa integração resulte de decisão autônoma das comunidades indígenas."], "k": 3, "e": "Terena pede que a sociedade escute os indígenas “na nossa língua, nos nossos costumes”: defende o respeito à cultura. Jaguaribe trata a história como um processo civilizatório linear e prevê que os índios serão absorvidos, ou seja, a aculturação é inevitável. As demais alternativas distorcem o que os textos dizem.", "src": ""}, {"tema": "Democracia racial × desigualdade", "b": [["p", "A questão étnica no Brasil tem provocado diferentes atitudes:"], ["q", "I. Instituiu-se o “Dia Nacional da Consciência Negra” em 20 de novembro, ao invés da tradicional celebração do 13 de maio. Essa nova data é o aniversário da morte de Zumbi, que hoje simboliza a crítica à segregação e à exclusão social."], ["q", "II. Um turista estrangeiro que veio ao Brasil, no carnaval, afirmou que nunca viu tanta convivência harmoniosa entre as diversas etnias."], ["p", "Também sobre essa questão, estudiosos fazem diferentes reflexões:"], ["q", "Entre nós [brasileiros], [...] a separação imposta pelo sistema de produção foi a mais fluida possível. Permitiu constante mobilidade de classe para classe e até de uma raça para outra. Esse amor, acima de preconceitos de raça e de convenções de classe, do branco pela cabocla, pela cunhã, pela índia [...] agiu poderosamente na formação do Brasil, adoçando-o."], ["s", "Gilberto FREYRE. O mundo que o português criou."], ["q", "[Porém] o fato é que ainda hoje a miscigenação não faz parte de um processo de integração das “raças” em condições de igualdade social. O resultado foi que [...] ainda são pouco numerosos os segmentos da “população de cor” que conseguiram se integrar, efetivamente, na sociedade competitiva."], ["s", "Florestan FERNANDES. O negro no mundo dos brancos."]], "c": "Considerando as atitudes expostas em I e II e os pontos de vista dos estudiosos, é correto aproximar", "a": ["a posição de Gilberto Freyre e a de Florestan Fernandes igualmente às duas atitudes.", "a posição de Gilberto Freyre à atitude I e a de Florestan Fernandes à atitude II.", "a posição de Florestan Fernandes à atitude I e a de Gilberto Freyre à atitude II.", "somente a posição de Gilberto Freyre a ambas as atitudes.", "somente a posição de Florestan Fernandes a ambas as atitudes."], "k": 2, "e": "A atitude I (Dia da Consciência Negra) lembra Zumbi e critica a segregação e a exclusão, como Florestan Fernandes, para quem a miscigenação não trouxe integração em condições de igualdade. A atitude II (convivência harmoniosa entre as etnias) combina com a visão de Freyre, base da ideia de democracia racial.", "src": ""}, {"tema": "Olhares sobre o Brasil", "b": [["q", "Natureza edênica, humanidade demonizada e colônia vista como purgatório foram as formulações mentais com que os homens do Velho Mundo vestiram o Brasil nos seus três primeiros séculos de existência."], ["s", "SOUZA, Laura de Mello e. O diabo e a terra de Santa Cruz. São Paulo: Cia das Letras, 1987, p. 85."], ["p", "Desde a chegada das primeiras caravelas ao litoral brasileiro, o Brasil foi a terra dos estrangeiros. Para cá vieram colonos portugueses, escravos africanos, e no século XIX uma leva de imigrantes de todas as partes do mundo. A forma como esses estrangeiros enxergavam e sentiam a nova terra mudava de grupo para grupo."]], "c": "Quanto a essas visões é possível dizer que", "a": ["para os colonos portugueses o Brasil seria a terra das oportunidades, o paraíso; para os negros africanos o purgatório, o lugar para pagar os pecados cometidos na África e para os imigrantes do século XIX expulsos de sua terra, a identificação do próprio inferno.", "para os colonos portugueses o Brasil era como um lugar de passagem, o purgatório; para os negros africanos o Brasil era a terra das oportunidades, da liberdade, e para os imigrantes do século XIX, expulsos de sua terra, a chegada ao próprio inferno.", "para os colonos portugueses o Brasil era um lugar de passagem, o purgatório, para depois retornar ao paraíso, Portugal; para os negros africanos o Brasil era identificado com o inferno, o mundo da escravidão, e para os imigrantes do século XIX a terra das oportunidades, um possível paraíso.", "para os colonos portugueses, expulsos de sua terra natal, o Brasil era o próprio inferno, para os negros africanos o purgatório, o lugar para pagar os pecados cometidos na África, e para os imigrantes do século XIX a terra das oportunidades.", "para os colonos portugueses o Brasil era um lugar de passagem, o purgatório, para depois retornar ao paraíso, Portugal; para os negros africanos o Brasil era a terra das oportunidades, da liberdade, e para os imigrantes do século XIX o Brasil também era visto como o lugar das oportunidades e da fartura, um possível paraíso."], "k": 2, "e": "Na leitura da historiadora, os europeus viam o Brasil como paraíso (natureza), inferno (humanidade demonizada) e purgatório (colônia). Para os portugueses, o Brasil era lugar de passagem, antes do retorno ao “paraíso”; para os africanos escravizados, o inferno da escravidão; para os imigrantes do século XIX, a terra das oportunidades.", "src": "Insper-SP"}, {"tema": "Cosmovisão Yanomami", "b": [["p", "Os Yanomami constituem uma sociedade indígena do norte da Amazônia e formam um amplo conjunto linguístico e cultural. Para os Yanomami, urihi, a “terra-floresta”, não é um mero cenário inerte, objeto de exploração econômica, e sim uma entidade viva, animada por uma dinâmica de trocas entre os diversos seres que a povoam. A floresta possui um sopro vital, wixia, que é muito longo. Se não a desmatamos, ela não morrerá. Ela não se decompõe, isto é, não se desfaz. É graças ao seu sopro úmido que as plantas crescem. A floresta não está morta pois, se fosse assim, as florestas não teriam folhas. Tampouco se veria água. Segundo os Yanomami, se os brancos os fizerem desaparecer para desmatá-la e morar no seu lugar, ficarão pobres e acabarão tendo fome e sede."], ["s", "ALBERT, B. Yanomami. O espírito da floresta, Almanaque Brasil Socioambiental. São Paulo: ISA, 2007 (adaptado)."]], "c": "De acordo com o texto, os Yanomami acreditam que", "a": ["a floresta não possui organismos decompositores.", "o potencial econômico da floresta deve ser explorado.", "o homem branco convive harmonicamente com urihi.", "as folhas e a água são menos importantes para a floresta que seu sopro vital.", "Wixia é a capacidade que tem a floresta de se sustentar por meio de processos vitais."], "k": 4, "e": "Para os Yanomami, wixia é o sopro vital da floresta, que a mantém viva e faz as plantas crescerem: a capacidade de se sustentar por processos vitais. A floresta é um ser vivo, e não um cenário a ser explorado; por isso, o texto diz que ela não se decompõe se não for desmatada.", "src": ""}, {"tema": "Ações afirmativas", "b": [["h", "Parecer CNE/CP n. 3/2004, que instituiu as Diretrizes Curriculares Nacionais para a Educação das Relações Étnico-Raciais e para o Ensino de História e Cultura Afro-Brasileira e Africana."], ["p", "Procura-se oferecer uma resposta, entre outras, na área da educação, à demanda da população afrodescendente, no sentido de políticas de ações afirmativas. Propõe a divulgação e a produção de conhecimentos, a formação de atitudes, posturas que eduquem cidadãos orgulhosos de seu pertencimento étnico-racial – descendentes de africanos, povos indígenas, descendentes de europeus, de asiáticos – para interagirem na construção de uma nação democrática, em que todos igualmente tenham seus direitos garantidos."], ["s", "BRASIL. Conselho Nacional de Educação. Disponível em: <www.semesp.org.br>. Acesso em: 21 nov. 2013. Adaptado"]], "c": "A orientação adotada por esse parecer fundamenta uma política pública e associa o princípio da inclusão social a", "a": ["práticas de valorização identitária.", "medidas de compensação econômica.", "dispositivos de liberdade de expressão.", "estratégias de qualificação profissional.", "instrumentos de modernização jurídica."], "k": 0, "e": "O parecer defende uma política de ação afirmativa na educação: formar cidadãos orgulhosos de seu pertencimento étnico-racial. Isso associa a inclusão social a práticas de valorização identitária, e não a compensação econômica ou qualificação profissional.", "src": ""}, {"tema": "Estereótipos sobre a África", "b": [["p", "A África também já serviu como ponto de partida para comédias bem vulgares, mas de muito sucesso, como Um príncipe em Nova York e Ace Ventura: um maluco na África; em ambas, a África parece um lugar cheio de tribos doidas e rituais de desenho animado. A animação O rei Leão, da Disney, o mais bem-sucedido filme americano ambientado na África, não chegava a contar com elenco de seres humanos."], ["s", "LEIBOWITZ, E. “Filmes de Hollywood sobre África ficam no clichê”. Disponível em: http://noticias.uol.com.br. Acesso em: 17 abr. 2010."]], "c": "A produção cinematográfica referida no texto contribui para a constituição de uma memória sobre a África e seus habitantes. Essa memória enfatiza e negligencia, respectivamente, os seguintes aspectos do continente africano:", "a": ["A história e a natureza.", "O exotismo e as culturas.", "A sociedade e a economia.", "O comércio e o ambiente.", "A diversidade e a política."], "k": 1, "e": "O texto critica filmes que reduzem a África a “tribos doidas e rituais de desenho animado”. A memória criada enfatiza o exotismo e negligencia as culturas africanas, com sua história e diversidade.", "src": ""}, {"tema": "Cultura caipira", "b": [["p", "Jeca Tatu é um personagem criado pelo escritor brasileiro Monteiro Lobato no começo do século XX."], ["q", "I. A cultura caipira resistiu ao desenvolvimento do capitalismo no campo, o que é demonstrado pela expansão da música sertaneja moderna."], ["q", "II. Jeca Tatu era visto como o modelo ideal de trabalhador para a indústria automobilística nascente, por seu caráter dócil e seu espírito de iniciativa para enfrentar as adversidades."], ["q", "III. A tradição da cultura caipira baseava-se na produção de valores de uso e mutirões, expressão do limitado desenvolvimento da economia de mercado, nos agrupamentos rurais."], ["q", "IV. Jeca Tatu exprimia, do ponto de vista econômico, a existência de disparidades sociais entre, de um lado, um Brasil moderno e industrial e, de outro, aquele atrasado e agrário."]], "c": "Com base no personagem Jeca Tatu e nos conhecimentos sobre a cultura caipira, assinale a alternativa correta.", "a": ["Somente as afirmativas I e II são corretas.", "Somente as afirmativas II e IV são corretas.", "Somente as afirmativas III e IV são corretas.", "Somente as afirmativas I, II e III são corretas.", "Somente as afirmativas I, III e IV são corretas."], "k": 2, "e": "Estão corretas III e IV. Na cultura caipira tradicional predominavam o valor de uso e os mutirões, e Jeca Tatu simbolizava o Brasil rural e atrasado em contraste com o Brasil moderno e industrial. A I erra, pois a música sertaneja moderna mostra a incorporação da cultura caipira ao mercado; a II erra, pois Lobato retratava o Jeca como indolente, e não como trabalhador modelo.", "src": "UEL-PR"}, {"tema": "Hip-hop e identidade", "b": [["p", "No Brasil, a origem do funk e do hip-hop remonta aos anos 1970, quando da proliferação dos chamados “bailes black” nas periferias dos grandes centros urbanos. Embalados pela black music americana, milhares de jovens encontravam nos bailes de final de semana uma alternativa de lazer antes inexistente. Em cidades como o Rio de Janeiro ou São Paulo, formavam-se equipes de som que promoviam bailes onde foi se disseminando um estilo que buscava a valorização da cultura negra, tanto na música como nas roupas e nos penteados. No Rio de Janeiro ficou conhecido como “Black Rio”. A indústria fonográfica descobriu o filão e, lançando discos de “equipe” com as músicas de sucesso nos bailes, difundia a moda pelo restante do país."], ["s", "DAYRELL, J. A música entra em cena: o rap e o funk na socialização da juventude. Belo Horizonte: UFMG, 2005."]], "c": "A presença da cultura hip-hop no Brasil caracteriza-se como uma forma de", "a": ["lazer gerada pela diversidade de práticas artísticas nas periferias urbanas.", "entretenimento inventada pela indústria fonográfica nacional.", "subversão de sua proposta original já nos primeiros bailes.", "afirmação de identidade dos jovens que a praticam.", "reprodução da cultura musical norte-americana."], "k": 3, "e": "Os bailes black valorizavam a cultura negra na música, nas roupas e nos penteados. O hip-hop e o funk funcionam, assim, como afirmação de identidade dos jovens das periferias. A indústria fonográfica apenas passou a explorar uma prática que já existia.", "src": ""}, {"tema": "Escravidão e coisificação", "b": [["h", "Anúncios de jornal do século XIX"], ["q", "Vende-se para o mato uma preta da costa de quarenta e tantos anos, muito sadia e bastante robusta, sabe bem lavar e cozinhar o diário de uma casa, vende-se em conta por haver precisão, no beco Largo, n. 2, na mesma casa vende-se uma tartaruga verdadeira."], ["q", "Vende-se uma escrava muito moça, bonita figura, sabe cozinhar e engomar e é uma perfeita costureira, própria para qualquer modista: na botica de Joaquim Ignacio Ribeiro Júnior, na praça da Boa Vista."], ["q", "Vende-se um bom escravo de meia idade por cômodo preço: na rua da Praia n. 47, primeiro andar."], ["s", "FREYRE, Gilberto. O escravo nos anúncios de jornais brasileiros do século XIX. São Paulo: Nacional, 1979. p. 9."]], "c": "A escravidão foi um fator fundamental na formação da sociedade brasileira e deixou marcas profundas na mentalidade do povo. Um dos aspectos que mais se destaca nos anúncios de jornal acima ilustrados – coletados pelo sociólogo Gilberto Freyre, autor de Casa-Grande & Senzala – refere-se:", "a": ["à desvalorização das habilidades meramente manuais dos trabalhadores.", "à coisificação dos africanos escravizados, reduzidos à condição de mercadorias.", "à confirmação de que somente os mais abastados aristocratas tinham escravos.", "ao avanço do processo de abolição da escravatura ocorrido no século XIX.", "à prática do aluguel de mão de obra, os escravos de ganho, comum desde o século XVII."], "k": 1, "e": "Os anúncios oferecem pessoas ao lado de uma tartaruga, com preço e utilidades: o escravizado aparece como mercadoria. É a coisificação dos africanos, que o sistema escravista tratava como propriedade e instrumento de trabalho.", "src": ""}, {"tema": "Interpretações do Brasil", "b": [["p", "Para Caio Prado Jr., a formação brasileira se completaria no momento em que fosse superada a nossa herança de inorganicidade social – o oposto da interligação com objetivos internos – trazida da colônia. Este momento alto estaria, ou esteve, no futuro. Se passarmos a Sérgio Buarque de Holanda, encontraremos algo análogo. O país será moderno e estará formado quando superar a sua herança portuguesa, rural e autoritária, quando então teríamos um país democrático. Também aqui o ponto de chegada está mais adiante, na dependência das decisões do presente. Celso Furtado, por seu turno, dirá que a nação não se completa enquanto as alavancas do comando, principalmente do econômico, não passarem para dentro do país. Como para os outros dois, a conclusão do processo encontra-se no futuro, que agora parece remoto."], ["s", "SCHWARZ, R. Os sete fôlegos de um livro. Sequências brasileiras. São Paulo: Cia das Letras, 1999 (adaptado)"]], "c": "Acerca das expectativas quanto à formação do Brasil, a sentença que sintetiza os pontos de vista apresentados no texto é:", "a": ["Brasil, um país que vai pra frente.", "Brasil, a eterna esperança.", "Brasil, glória no passado, grandeza no presente.", "Brasil, terra bela, pátria grande.", "Brasil, gigante pela própria natureza."], "k": 1, "e": "Para Caio Prado Jr., Sérgio Buarque de Holanda e Celso Furtado, a formação do Brasil só se completaria no futuro, quando superados a inorganicidade, a herança rural e autoritária ou a dependência econômica. Daí a síntese: “a eterna esperança”.", "src": ""}];
+const COLORS = ['--t0','--t1','--t2','--t3','--t4','--t5'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cfgDefault = {n:4, names:['Equipe 1','Equipe 2','Equipe 3','Equipe 4','Equipe 5','Equipe 6'], time:60, steal:true, shuffle:false};
+let cfg = {...cfgDefault};
+try { const s = JSON.parse(localStorage.getItem('desafio-revisao-soc-cfg')||'null'); if (s) cfg = {...cfgDefault, ...s}; } catch(e){}
+const saveCfg = () => { try { localStorage.setItem('desafio-revisao-soc-cfg', JSON.stringify(cfg)); } catch(e){} };
+let S = null, timer = null;
+
+function shuffled(a){ a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const dot = i => `<i style="background:var(${COLORS[i]})"></i>`;
+const fmt = s => cfg.time ? String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0') : '--:--';
+
+/* ---------- setup ---------- */
+function renderSetup(){
+  stopTimer();
+  const names = [...Array(cfg.n)].map((_,i)=>`<label>${dot(i)}<input id="nm${i}" value="${esc(cfg.names[i])}" maxlength="18" aria-label="Nome da equipe ${i+1}"></label>`).join('');
+  $('#app').innerHTML = `
+  <div class="setup">
+    <div class="hero">
+      <div class="eyebrow">Sociologia · Revisão do bimestre</div>
+      <h1>Desafio da Revisão</h1>
+      <p>Dez questões sobre a formação da sociedade brasileira: povos indígenas, escravidão, relações étnico-raciais, cultura e identidade. Cada equipe responde na sua vez; errou, a próxima pode roubar os pontos.</p>
+    </div>
+    <div class="panel">
+      <div class="row"><span class="eyebrow">Equipes</span>
+        <div class="chips" id="chN">${[2,3,4,5,6].map(n=>`<button class="chip" data-n="${n}" aria-pressed="${cfg.n===n}">${n}</button>`).join('')}</div></div>
+      <div class="names">${names}</div>
+      <div class="row"><span class="eyebrow">Tempo por resposta</span>
+        <div class="chips" id="chT">${[[30,'30 s'],[60,'60 s'],[90,'90 s'],[0,'Sem limite']].map(([v,l])=>`<button class="chip" data-t="${v}" aria-pressed="${cfg.time===v}">${l}</button>`).join('')}</div></div>
+      <label class="sw"><input type="checkbox" id="steal" ${cfg.steal?'checked':''}> Rebote: se a equipe errar, a próxima pode roubar 5 pontos</label>
+      <label class="sw"><input type="checkbox" id="shuf" ${cfg.shuffle?'checked':''}> Embaralhar a ordem das questões</label>
+      <button class="go" id="go">Começar o desafio</button>
+    </div>
+  </div>
+  <div class="foot"><span>Acertou na vez: 10 pontos · Rebote: 5 pontos</span><span>Teclas: A–E escolhem · Enter confirma · Espaço avança · P pausa</span></div>`;
+  $('#chN').onclick = e => { const b=e.target.closest('[data-n]'); if(!b) return; readNames(); cfg.n=+b.dataset.n; renderSetup(); };
+  $('#chT').onclick = e => { const b=e.target.closest('[data-t]'); if(!b) return; readNames(); cfg.time=+b.dataset.t; renderSetup(); };
+  $('#go').onclick = () => { readNames(); cfg.steal=$('#steal').checked; cfg.shuffle=$('#shuf').checked; saveCfg(); newGame(); };
+}
+function readNames(){ for(let i=0;i<cfg.n;i++){ const v=($('#nm'+i)?.value||'').trim(); cfg.names[i]=v||('Equipe '+(i+1)); } cfg.steal=$('#steal')?.checked??cfg.steal; cfg.shuffle=$('#shuf')?.checked??cfg.shuffle; }
+
+/* ---------- game ---------- */
+function newGame(){
+  let order = Q.map((_,i)=>i); if (cfg.shuffle) order = shuffled(order);
+  S = { teams:[...Array(cfg.n)].map((_,i)=>({name:cfg.names[i],score:0})), order, i:0, q:null, phase:'answer', owner:0, cur:0, picked:null, elim:[], left:cfg.time, paused:false, gain:null, note:'' };
+  startQuestion();
+}
+function prep(q){ return { tema:q.tema, b:q.b, c:q.c, e:q.e, alts:q.a.slice(), k:q.k, src:q.src }; }
+const size = q => { const n=q.b.reduce((s,x)=>s+x[1].length,0)+q.c.length; return n>1500?'xl':n>1000?'lg':n>600?'md':''; };
+const blocks = q => q.b.map(([k,x])=>k==='h'?`<div class="eyebrow bh">${esc(x)}</div>`:k==='s'?`<p class="srcl">${esc(x)}</p>`:k==='q'?`<p class="base qq">${esc(x)}</p>`:`<p class="base">${esc(x)}</p>`).join('');
+function startQuestion(){
+  S.q = prep(Q[S.order[S.i]]);
+  S.owner = S.i % S.teams.length; S.cur = S.owner; S.phase='answer'; S.picked=null; S.elim=[]; S.gain=null; S.note=''; S.paused=false;
+  S.left = cfg.time; startTimer(); renderRound();
+}
+function startTimer(){
+  stopTimer(); if(!cfg.time) return;
+  timer = setInterval(()=>{ if(S.paused) return; S.left--; if(S.left<=0){ S.left=0; stopTimer(); lock(true); return; } paintTimer(); }, 1000);
+}
+function stopTimer(){ if(timer){ clearInterval(timer); timer=null; } }
+function paintTimer(){
+  const f=$('.fill'), b=$('#tm'); if(!f||!b) return;
+  f.style.width = cfg.time ? (S.left/cfg.time*100)+'%' : '100%'; f.classList.toggle('low', cfg.time>0 && S.left<=10); b.textContent=fmt(S.left);
+}
+function scoreboard(bump){
+  return `<div class="score">${S.teams.map((t,i)=>`<div class="team ${S.phase!=='reveal'&&i===S.cur?'on':''} ${bump===i?'bump':''}">${dot(i)}<span>${esc(t.name)}</span><b>${t.score}</b></div>`).join('')}</div>`;
+}
+function renderRound(bump){
+  const q=S.q, rev=S.phase==='reveal', locked=rev;
+  const alts = q.alts.map((a,i)=>{
+    let cls='alt'; if(rev){ if(i===q.k) cls+=' right'; else if(i===S.picked) cls+=' wrong'; }
+    else { if(S.elim.includes(i)) cls+=' out'; else if(i===S.picked) cls+=' sel'; }
+    return `<button class="${cls}" data-i="${i}" ${locked||S.elim.includes(i)?'disabled':''}><span class="L">${'ABCDE'[i]}</span><span>${esc(a)}</span></button>`;
+  }).join('');
+  const t = S.teams[S.cur];
+  let side='';
+  if(rev){
+    const ok = S.gain && S.gain.ok;
+    side = `<div class="verdict ${ok?'ok':'no'}"><h3>${ok?`${esc(S.teams[S.gain.team].name)} ganhou ${S.gain.pts} pontos`:'Ninguém pontuou nesta rodada'}</h3><p>${esc(q.e)}</p></div>
+      <div class="actions"><button class="go" id="next">${S.i===S.order.length-1?'Ver resultado':'Próxima questão'}</button><span class="hint">Espaço ou Enter</span></div>`;
+  } else {
+    side = `${S.note?`<div class="notice">${esc(S.note)}</div>`:''}
+      <div class="actions"><button class="go" id="lock" ${S.picked===null?'disabled style="opacity:.45;cursor:not-allowed"':''}>Travar resposta</button>
+      <button class="ghost" id="pause">${S.paused?'Retomar':'Pausar'}</button><span class="hint">A–E escolhe · Enter trava</span></div>`;
+  }
+  $('#app').innerHTML = `
+  <div class="bar"><div class="brand"><span class="eyebrow">Desafio da Revisão</span><b>Questão ${S.i+1} de ${S.order.length} · ${esc(q.tema)}${q.src?' · '+esc(q.src):''}</b></div>${scoreboard(bump)}</div>
+  <div class="meta">
+    <div class="turn">${dot(S.cur)}${rev?'Resultado':esc(t.name)}<span class="tag ${S.phase==='steal'?'steal':''}">${rev?'Revelação':S.phase==='steal'?'Rebote · 5 pontos':'Na vez · 10 pontos'}</span></div>
+    ${cfg.time?`<div class="timer"><div class="track"><div class="fill" style="width:${S.left/cfg.time*100}%"></div></div><b id="tm">${fmt(S.left)}</b></div>`:''}
+  </div>
+  <div class="stage">
+    <div class="card ${size(q)}">${blocks(q)}<p class="cmd">${esc(q.c)}</p></div>
+    <div style="display:flex;flex-direction:column;gap:1rem"><div class="alts" id="alts">${alts}</div>${side}</div>
+  </div>
+  <div class="foot"><button class="ghost" id="quit">Encerrar jogo</button><span>${rev?'':'A equipe da vez escolhe; o professor clica ou digita a letra.'}</span></div>`;
+  $('#alts').onclick = e => { const b=e.target.closest('.alt'); if(!b||b.disabled) return; pick(+b.dataset.i); };
+  const l=$('#lock'); if(l) l.onclick = () => lock(false);
+  const p=$('#pause'); if(p) p.onclick = togglePause;
+  const n=$('#next'); if(n) n.onclick = next;
+  $('#quit').onclick = () => finish();
+}
+function pick(i){ if(S.phase==='reveal'||S.elim.includes(i)) return; S.picked=i; renderRound(); }
+function togglePause(){ S.paused=!S.paused; renderRound(); }
+function lock(timeout){
+  if(S.phase==='reveal') return;
+  if(!timeout && S.picked===null) return;
+  stopTimer();
+  const q=S.q, ok = !timeout && S.picked===q.k;
+  if(ok){ const pts = S.phase==='answer'?10:5; S.teams[S.cur].score+=pts; S.gain={ok:true,team:S.cur,pts}; S.phase='reveal'; renderRound(S.cur); return; }
+  if(S.phase==='answer' && cfg.steal && S.teams.length>1){
+    if(!timeout) S.elim.push(S.picked);
+    const prev=S.cur; S.cur=(S.cur+1)%S.teams.length; S.phase='steal'; S.picked=null;
+    S.note = (timeout?'Tempo esgotado. ':'Resposta incorreta. ')+S.teams[S.cur].name+' pode roubar os pontos. A alternativa já eliminada está riscada.';
+    S.left = cfg.time ? Math.min(cfg.time,30) : 0; startTimer(); renderRound(); return;
+  }
+  S.gain={ok:false}; S.phase='reveal'; renderRound();
+}
+function next(){ if(S.i>=S.order.length-1){ finish(); return; } S.i++; startQuestion(); }
+
+/* ---------- final ---------- */
+function finish(){
+  stopTimer();
+  const r = S.teams.map((t,i)=>({...t,i})).sort((a,b)=>b.score-a.score);
+  const top = r[0].score, winners = r.filter(t=>t.score===top);
+  const head = top===0 ? 'Ninguém pontuou' : winners.length>1 ? 'Empate no topo' : esc(winners[0].name)+' venceu';
+  const sub = top===0 ? 'Vale refazer a rodada com o caderno aberto.' : winners.length>1 ? winners.map(w=>esc(w.name)).join(' e ')+' terminaram com '+top+' pontos.' : 'Com '+top+' pontos em '+(S.i+(S.phase==='reveal'?1:0))+' questões.';
+  let pos=0, last=null;
+  const rows = r.map((t,k)=>{ if(t.score!==last){ pos=k+1; last=t.score; } return `<div class="rk ${pos===1&&top>0?'first':''}"><span class="n">${pos}º</span><span class="nm">${dot(t.i)}<span>${esc(t.name)}</span></span><span class="pt">${t.score}</span></div>`; }).join('');
+  $('#app').innerHTML = `<div class="bar"><div class="brand"><span class="eyebrow">Desafio da Revisão</span><b>Resultado final</b></div></div>
+   <div class="final"><div><h1>${head}</h1><p class="hero" style="color:var(--muted);margin:.6rem 0 0;font-size:1.2rem">${sub}</p></div>
+   <div class="rank">${rows}</div>
+   <div class="actions"><button class="go" id="again">Jogar de novo</button><button class="ghost" id="setup">Mudar equipes</button></div></div>
+   <div class="foot"><span>Sociedade brasileira · Etnia · Cultura · Identidade</span></div>`;
+  S.phase='final';
+  $('#again').onclick = newGame; $('#setup').onclick = renderSetup;
+}
+
+/* ---------- teclado ---------- */
+document.addEventListener('keydown', e=>{
+  if(!S || e.target.matches('input')||e.ctrlKey||e.metaKey||e.altKey) return;
+  const k=e.key.toLowerCase();
+  if(e.target.closest&&e.target.closest('button')&&(k===' '||k==='enter')) return;
+  if(S.phase==='final') return;
+  if(S.phase==='reveal'){ if(k===' '||k==='enter'){ e.preventDefault(); next(); } return; }
+  if('abcde'.includes(k)&&k.length===1){ pick('abcde'.indexOf(k)); }
+  else if(k==='enter'){ e.preventDefault(); lock(false); }
+  else if(k==='p'){ togglePause(); }
+});
+renderSetup();
+</script>
+
+</body></html>
